@@ -1,8 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
 import { Tabs, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useSupabase } from '../../contexts/SupabaseContext';
+import { CustomTabBar } from '../../components/CustomTabBar';
 
 export default function TabsLayout() {
   const supabase = useSupabase();
@@ -39,31 +39,31 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#2563eb',
-        tabBarInactiveTintColor: '#6b7280',
+        headerTitle: 'undrink',
+        headerTitleAlign: 'left',
+        headerTitleStyle: {
+          fontSize: 24,
+          fontWeight: '700',
+        },
         headerStyle: { backgroundColor: '#f9fafb' },
+        tabBarStyle: { display: 'none' },
       }}
+      tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tabs.Screen
         name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
-        }}
       />
       <Tabs.Screen
-        name="history"
-        options={{
-          title: 'History',
-          tabBarIcon: ({ color, size }) => <Ionicons name="list" size={size} color={color} />,
-        }}
+        name="stats"
+      />
+      <Tabs.Screen
+        name="add-drinks"
+      />
+      <Tabs.Screen
+        name="friends"
       />
       <Tabs.Screen
         name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size }) => <Ionicons name="settings" size={size} color={color} />,
-        }}
       />
     </Tabs>
   );

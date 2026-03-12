@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function History() {
+export default function AddDrinks() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>History</Text>
-      <Text style={styles.placeholder}>Your drink log will appear here once the database is set up.</Text>
+      <Text style={styles.title}>Add drinks</Text>
+      <Text style={styles.placeholder}>
+        This will become the main screen for logging drinks.
+      </Text>
     </View>
   );
 }
@@ -25,3 +27,4 @@ const styles = StyleSheet.create({
     color: '#6b7280',
   },
 });
+
