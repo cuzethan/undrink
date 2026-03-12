@@ -11,13 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useSupabase } from '../../contexts/SupabaseContext';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const supabase = useSupabase();
   const router = useRouter();
 
   async function handleSignIn() {
@@ -25,14 +23,12 @@ export default function SignIn() {
       Alert.alert('Error', 'Please enter email and password.');
       return;
     }
+    // Temporary placeholder: pretend sign-in succeeded and go to main tabs.
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-    setLoading(false);
-    if (error) {
-      Alert.alert('Sign in failed', error.message);
-      return;
-    }
-    router.replace('/(tabs)');
+    setTimeout(() => {
+      setLoading(false);
+      router.replace('/(tabs)');
+    }, 500);
   }
 
   return (

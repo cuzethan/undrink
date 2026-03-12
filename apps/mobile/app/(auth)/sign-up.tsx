@@ -11,13 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useSupabase } from '../../contexts/SupabaseContext';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const supabase = useSupabase();
   const router = useRouter();
 
   async function handleSignUp() {
@@ -29,16 +27,14 @@ export default function SignUp() {
       Alert.alert('Error', 'Password must be at least 6 characters.');
       return;
     }
+    // Temporary placeholder: fake a successful sign-up and go to sign-in.
     setLoading(true);
-    const { error } = await supabase.auth.signUp({ email: email.trim(), password });
-    setLoading(false);
-    if (error) {
-      Alert.alert('Sign up failed', error.message);
-      return;
-    }
-    Alert.alert('Check your email', 'We sent you a confirmation link.', [
-      { text: 'OK', onPress: () => router.replace('/(auth)/sign-in') },
-    ]);
+    setTimeout(() => {
+      setLoading(false);
+      Alert.alert('Account created', 'This is a temporary flow until real auth is wired.', [
+        { text: 'OK', onPress: () => router.replace('/(auth)/sign-in') },
+      ]);
+    }, 500);
   }
 
   return (
