@@ -1,0 +1,8 @@
+{
+  "name": "undrink",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:mobile": "npm run start --prefix apps/mobile"
+  }
+}
