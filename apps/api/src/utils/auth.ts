@@ -1,5 +1,8 @@
 import { betterAuth } from "better-auth";
+import dotenv from "dotenv";
 import { Pool } from "pg";
+
+dotenv.config();
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -10,7 +13,7 @@ if (!databaseUrl) {
   );
 }
 
-const pool = new Pool(
+export const pool = new Pool(
   databaseUrl
     ? {
         connectionString: databaseUrl,
@@ -18,7 +21,7 @@ const pool = new Pool(
     : undefined
 );
 
-export const auth = betterAuth({
+const auth = betterAuth({
   database: pool,
   emailAndPassword: {
     enabled: true,
@@ -26,3 +29,4 @@ export const auth = betterAuth({
   // We'll add Google and other providers later.
 });
 
+export default auth;

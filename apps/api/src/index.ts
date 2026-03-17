@@ -1,10 +1,8 @@
-import express from "express";
+import express, { application } from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import { toNodeHandler } from "better-auth/node";
-import { auth } from "./auth";
-
-dotenv.config();
+import auth from "./utils/auth";
+import routerIndex from "./routerIndex";
 
 const app = express();
 const port = process.env.PORT ?? "3000";
@@ -21,13 +19,14 @@ app.use(
 );
 app.use(express.json());
 
-// Simple health check
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true });
+app.use("/api", routerIndex);
+
+app.get("/", (req, res) => {
+  res.json({ message: "Hello, world!" });
 });
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
-  console.log(`API listening on http://localhost:${port}`);
+  console.log(`API listening on http://0.0.0.0:${port}`);
 });
 
