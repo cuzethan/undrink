@@ -7,10 +7,8 @@ import routerIndex from "./routerIndex";
 const app = express();
 const port = process.env.PORT ?? "3000";
 
-// Better Auth routes: handle /api/auth/* before JSON/body middleware
 app.all("/api/auth/*", toNodeHandler(auth));
 
-// JSON parsing and CORS for the rest of the API
 app.use(
   cors({
     origin: "*", // replace with the mobile app's URL later
@@ -28,7 +26,6 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  // eslint-disable-next-line no-console
   console.log(`API listening on http://0.0.0.0:${port}`);
 });
 

@@ -1,4 +1,6 @@
 import { betterAuth } from "better-auth";
+import { username } from "better-auth/plugins";
+import { expo } from "@better-auth/expo";
 import dotenv from "dotenv";
 import { Pool } from "pg";
 
@@ -21,12 +23,14 @@ export const pool = new Pool(
     : undefined
 );
 
-const auth = betterAuth({
+export const auth = betterAuth({
   database: pool,
   emailAndPassword: {
     enabled: true,
   },
+  plugins: [
+    username(),
+    expo()
+  ]
   // We'll add Google and other providers later.
 });
-
-export default auth;
