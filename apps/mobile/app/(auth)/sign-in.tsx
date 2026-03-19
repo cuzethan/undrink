@@ -15,18 +15,18 @@ import {
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   async function handleSignIn() {
-    if (!username.trim() || !email.trim() || !password) {
-      Alert.alert('Error', 'Please enter username, email, and password.');
+    if (!username.trim() || !password) {
+      Alert.alert('Error', 'Please enter username and password.');
       return;
     }
 
     setLoading(true);
+    
     const { data, error } = await authClient.signIn.username({
       username: username.trim(),
       password,
@@ -36,15 +36,6 @@ export default function SignIn() {
 
     if (error) {
       Alert.alert('Sign in failed', error.message);
-      return;
-    }
-
-    // Enforce that the signed-in user matches the email the user typed.
-    const signedInEmail =
-      (data as any)?.user?.email ?? (data as any)?.session?.user?.email;
-
-    if (signedInEmail && signedInEmail !== email.trim()) {
-      Alert.alert('Sign in failed', 'The email does not match this username.');
       return;
     }
 
@@ -66,17 +57,6 @@ export default function SignIn() {
           onChangeText={setUsername}
           autoCapitalize="none"
           autoComplete="username"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          autoComplete="email"
         />
 
         <TextInput

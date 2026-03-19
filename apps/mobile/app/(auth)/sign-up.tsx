@@ -1,8 +1,10 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { authClient } from '../../lib/auth-client'; 
+import { z } from 'zod';
 import {
+  Alert, 
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -12,29 +14,57 @@ import {
   View,
 } from 'react-native';
 
+const SignUpSchema = z
+  .object({
+    username: z.string().trim().min(1, 'Username is required.').min(3, 'Username must be at least 3 characters.'),
+    email: z.email(),
+    password: z.string().min(1, 'Password is required.').min(6, 'Password must be at least 6 characters.'),
+    confirmPassword: z.string().min(1, 'Please confirm your password.'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match.',
+    path: ['confirmPassword'],
+  });
+
 export default function SignUp() {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   async function handleSignUp() {
-    if (!email.trim() || !password) {
-      Alert.alert('Error', 'Please enter email and password.');
+    const result = SignUpSchema.safeParse({ username, email, password, confirmPassword });
+
+    // Single-alert UX: show only the first validation error.
+    if (!result.success) {
+      Alert.alert('Error', result.error.issues[0]?.message ?? 'Invalid input.');
       return;
     }
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters.');
+
+    const { data: response } = await authClient.isUsernameAvailable({
+      username: username.trim(),
+    });
+
+    if(!(response?.available)) {
+      Alert.alert('Error', 'Username is already taken.');
       return;
     }
-    // Temporary placeholder: fake a successful sign-up and go to sign-in.
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert('Account created', 'This is a temporary flow until real auth is wired.', [
-        { text: 'OK', onPress: () => router.replace('/(auth)/sign-in') },
-      ]);
-    }, 500);
+
+    const { data, error } = await authClient.signUp.email({
+      email,
+      password,
+      name: username.trim(),
+      username: username.trim(),
+    });
+
+    if (error) {
+      Alert.alert('Error', error.message);
+      return;
+    }
+
+    router.replace('/(auth)/sign-in');
   }
 
   return (
@@ -56,10 +86,28 @@ export default function SignUp() {
         />
         <TextInput
           style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#999"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+          autoComplete="username"
+        />
+        <TextInput
+          style={styles.input}
           placeholder="Password (min 6 characters)"
           placeholderTextColor="#999"
           value={password}
           onChangeText={setPassword}
+          secureTextEntry
+          autoComplete="new-password"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          placeholderTextColor="#999"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
           secureTextEntry
           autoComplete="new-password"
         />
