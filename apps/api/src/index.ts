@@ -7,7 +7,8 @@ import routerIndex from "./routerIndex";
 const app = express();
 const port = process.env.PORT ?? "3000";
 
-app.all("/api/auth/*", toNodeHandler(auth));
+// Express v5 requires named wildcard syntax for catch-all routes.
+app.all("/api/auth/{*any}", toNodeHandler(auth));
 
 app.use(
   cors({
