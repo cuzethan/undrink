@@ -28,6 +28,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  trustedOrigins: [
+    process.env.FRONTEND_SCHEME_URL as string,
+    ...(process.env.NODE_ENV === "development" ? [
+      "exp://",                     
+    ] : []),
+  ],
   plugins: [
     username(),
     expo()

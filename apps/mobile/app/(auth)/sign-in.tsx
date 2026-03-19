@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { authClient } from '../../lib/auth-client';
 import {
   ActivityIndicator,
   Alert,
@@ -13,22 +14,41 @@ import {
 } from 'react-native';
 
 export default function SignIn() {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   async function handleSignIn() {
-    if (!email.trim() || !password) {
-      Alert.alert('Error', 'Please enter email and password.');
+    if (!username.trim() || !email.trim() || !password) {
+      Alert.alert('Error', 'Please enter username, email, and password.');
       return;
     }
-    // Temporary placeholder: pretend sign-in succeeded and go to main tabs.
+
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      router.replace('/(tabs)');
-    }, 500);
+    const { data, error } = await authClient.signIn.username({
+      username: username.trim(),
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      Alert.alert('Sign in failed', error.message);
+      return;
+    }
+
+    // Enforce that the signed-in user matches the email the user typed.
+    const signedInEmail =
+      (data as any)?.user?.email ?? (data as any)?.session?.user?.email;
+
+    if (signedInEmail && signedInEmail !== email.trim()) {
+      Alert.alert('Sign in failed', 'The email does not match this username.');
+      return;
+    }
+
+    router.replace('/(tabs)');
   }
 
   return (
@@ -40,6 +60,16 @@ export default function SignIn() {
         <Text style={styles.title}>Sign in</Text>
         <TextInput
           style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#999"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+          autoComplete="username"
+        />
+
+        <TextInput
+          style={styles.input}
           placeholder="Email"
           placeholderTextColor="#999"
           value={email}
@@ -48,6 +78,7 @@ export default function SignIn() {
           keyboardType="email-address"
           autoComplete="email"
         />
+
         <TextInput
           style={styles.input}
           placeholder="Password"

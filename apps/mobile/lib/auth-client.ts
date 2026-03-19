@@ -1,5 +1,6 @@
 import { createAuthClient } from "better-auth/react";
 import { expoClient } from "@better-auth/expo/client";
+import { usernameClient } from "better-auth/client/plugins";
 import * as SecureStore from "expo-secure-store";
 
 import dotenv from "dotenv";
@@ -13,6 +14,7 @@ export const authClient = createAuthClient({
             scheme: "undrink",
             storagePrefix: "undrink",
             storage: SecureStore,
-        })
+        }),
+        usernameClient()
     ]
 });
