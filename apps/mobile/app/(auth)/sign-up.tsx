@@ -32,14 +32,16 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   async function handleSignUp() {
+    setLoading(true);
     const result = SignUpSchema.safeParse({ username, email, password, confirmPassword });
 
-    // Single-alert UX: show only the first validation error.
     if (!result.success) {
       Alert.alert('Error', result.error.issues[0]?.message ?? 'Invalid input.');
+      setLoading(false);
       return;
     }
 
@@ -48,14 +50,15 @@ export default function SignUp() {
     });
 
     if(!(response?.available)) {
-      Alert.alert('Error', 'Username is already taken.');
+      Alert.alert('Error', 'Username is already taken.')
+      setLoading(false);
       return;
     }
 
     const { data, error } = await authClient.signUp.email({
       email,
       password,
-      name: username.trim(),
+      name: "",
       username: username.trim(),
     });
 
@@ -63,6 +66,8 @@ export default function SignUp() {
       Alert.alert('Error', error.message);
       return;
     }
+
+    setLoading(false);
 
     router.replace('/(auth)/sign-in');
   }
