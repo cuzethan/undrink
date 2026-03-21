@@ -39,7 +39,7 @@ export default function SignIn() {
       return;
     }
 
-    router.replace('/(tabs)');
+    router.replace('/(auth)/set-display-name');
   }
 
   return (

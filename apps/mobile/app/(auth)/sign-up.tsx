@@ -49,27 +49,40 @@ export default function SignUp() {
       username: username.trim(),
     });
 
-    if(!(response?.available)) {
-      Alert.alert('Error', 'Username is already taken.')
+    if (!(response?.available)) {
+      Alert.alert('Error', 'Username is already taken.');
       setLoading(false);
       return;
     }
 
-    const { data, error } = await authClient.signUp.email({
+    const { error } = await authClient.signUp.email({
       email,
       password,
-      name: "",
+      name: '',
       username: username.trim(),
     });
 
     if (error) {
       Alert.alert('Error', error.message);
+      setLoading(false);
       return;
     }
 
+    // Instant login: same credentials, then set display name → home.
+    const { error: signInError } = await authClient.signIn.username({
+      username: username.trim(),
+      password,
+    });
+
     setLoading(false);
 
-    router.replace('/(auth)/sign-in');
+    if (signInError) {
+      Alert.alert('Account created', 'Please sign in with your username and password.');
+      router.replace('/(auth)/sign-in');
+      return;
+    }
+
+    router.replace('/(auth)/set-display-name');
   }
 
   return (

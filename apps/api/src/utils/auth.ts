@@ -27,6 +27,7 @@ export const auth = betterAuth({
   database: pool,
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 6,
   },
   trustedOrigins: [
     process.env.FRONTEND_SCHEME_URL as string,
